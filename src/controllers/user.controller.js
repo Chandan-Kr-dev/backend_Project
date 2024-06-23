@@ -34,17 +34,22 @@ const registerUser = asyncHandler(async (req, res) => {
 
   //check if user already exits  >> check by username
 
-  const existedUser = Users.findOne({
+  const existedUser = await Users.findOne({
     $or: [{ email }, { username }],
   });
   if (existedUser) {
     throw new apierror(409, "User with username or email already exists");
   }
 
+  // console.log(req.files)
+  // console.log(req.body)
+
   //files  uploaded or not ,check for avtar
 
   const avtarLocalPath=req.files?.avtar[0]?.path
   const coverImageLocalPath=req.files?.coverImage[0]?.path
+
+  
 
   if(!avtarLocalPath){
     throw new apierror(400,"avtar file is required");
@@ -75,8 +80,8 @@ const registerUser = asyncHandler(async (req, res) => {
   //remove password and refreshtoken field from respnose
   //check if user is created or not
 
-  const createdUser=await User.findById(user._id).select(
-    "-password -refreshToken"
+  const createdUser= await Users.findById(User._id).select(
+    "-password -refreshToken "
   )
   if(!createdUser){
     throw new apierror(500,"Something went wrong while registering the user")
