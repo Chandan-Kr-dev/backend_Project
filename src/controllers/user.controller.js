@@ -129,7 +129,7 @@ const loginUser=asyncHandler(async (req,res)=>{
   const {email,username,password}=req.body
 
   // check for username or email hai ya nahi 
-  if(!username || !email){
+  if(!(username || email)){
     throw new apierror(400,"username or password is required");
   }
 
@@ -173,7 +173,29 @@ const loginUser=asyncHandler(async (req,res)=>{
 // logout user
 
 const logoutUser=asyncHandler(async(req,res)=>{
-  
+  Users.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set:{
+        refreshToken:undefined
+      }
+    },
+    {
+      new:true
+    }
+  )
+  const options={
+    httpOnly:true,
+    secure:true,
+  }
+
+  return res
+  .status(200)
+  .clearCookie("accessToken",options)
+  .clearCookie("refreshToken",options)
+  .json(new apiResponse(200,{},"User Logged Out Successsfully"))
+
+
 })
 
-export { registerUser };
+export { registerUser,loginUser,logoutUser };
