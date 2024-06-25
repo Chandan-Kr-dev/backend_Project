@@ -279,7 +279,7 @@ const updateAccountDetails=asyncHandler(async(req,res)=>{
     
   }
 
-  const user=Users.findByIdAndUpdate(
+  const user=await Users.findByIdAndUpdate(
     req.user?._id,
     {
       $set:{
